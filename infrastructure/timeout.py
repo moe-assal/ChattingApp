@@ -28,7 +28,6 @@ class Timeout(Singleton):
         duration = self.end - self.start
         self.update_rtt(duration)
         self.update_dev_rtt(duration)
-        Timeout.current_estimate = self.get_timeout()
 
     def update_rtt(self, sample):
         if self.rtt is None:

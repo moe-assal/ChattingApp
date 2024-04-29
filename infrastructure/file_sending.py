@@ -4,16 +4,17 @@ import threading
 import os
 from queue import Queue
 from infrastructure.timeout import Timeout
+
 from signal import signal, SIGPIPE, SIG_DFL
 signal(SIGPIPE, SIG_DFL)
 
-CHUNK_SIZE = 10
+CHUNK_SIZE = 1024
 FIRST_PACKET_SIZE = 51
 
 
 class TCPSender:
     def __init__(self, my_address, friend_address):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock = None
         self.timeout = Timeout()
         self.update_timeout()
         self.other_address = friend_address
@@ -22,7 +23,7 @@ class TCPSender:
 
     def run(self, path):
         # Cover me, I'm reloading
-
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         while True:
             try:
                 self.update_timeout()
@@ -44,7 +45,6 @@ class TCPSender:
             self.sock.sendall(data)
         
         self.sock.close()
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def send_file(self, path):  # Listen up boys. We've got a new mission
         self.main_thread = threading.Thread(target=self.run, args=(path, ))
@@ -89,10 +89,11 @@ class TCPReceiver:
                 data = conn.recv(CHUNK_SIZE)
                 bytes_received += len(data)
                 file.write(data)
-                print("Received:", data, "\t\t", bytes_received, file_size, self.timeout.get_timeout())
+
                 if bytes_received == file_size:  # Extraction inbound
                     file.close()
                     break
 
             # we're done here boys, return to base
             self.buffer.put(file_name)
+            conn.close()

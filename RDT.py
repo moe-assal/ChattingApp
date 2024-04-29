@@ -44,7 +44,11 @@ class AppClient:
         return filename
 
     def close_all(self):
-        self.sender.sock.close()
-        self.receiver.sock.close()
-        self.tcp_sender.sock.close()
-        self.tcp_receiver.sock.close()
+        if self.sender.sock is not None:
+            self.sender.sock.close()
+        if self.receiver.sock is not None:
+            self.receiver.sock.close()
+        if self.tcp_sender.sock is not None:
+            self.tcp_sender.sock.close()
+        if self.tcp_receiver.sock is not None:
+            self.tcp_receiver.sock.close()

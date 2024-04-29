@@ -14,7 +14,6 @@ def corrupt_from_sender(data: str):
             return True
         return False
     except:
-        print("Corrupt: ", data)
         return True
 
 

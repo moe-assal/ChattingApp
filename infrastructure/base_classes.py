@@ -87,11 +87,10 @@ class Receiver:
             packt = self.receive()
             if corrupt_from_sender(packt):
                 continue
-            if get_sender_ack(packt) != self.ack_state:
+            if get_sender_ack(packt) < self.ack_state:
                 # send ack
                 self.send_ack(get_sender_ack(packt))
                 continue
             self.rcv_buffer.put(packt)
             self.send_ack(self.ack_state)
             self.ack_state += 1
-
