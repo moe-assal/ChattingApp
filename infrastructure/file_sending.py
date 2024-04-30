@@ -16,7 +16,6 @@ class TCPSender:
     def __init__(self, my_address, friend_address):
         self.sock = None
         self.timeout = Timeout()
-        self.update_timeout()
         self.other_address = friend_address
         self.this_address = my_address
         self.main_thread = None
